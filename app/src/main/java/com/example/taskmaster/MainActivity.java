@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +33,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
-            - Upload v1.0 to github! You'll hate doing it, but your future self will thank you
-            - Add an option to remove items from groups, checked or not
+            - Upload v1.0 to github! You'll hate doing it, but your future self will thank you - DONE
+            - Add an option to remove items from groups, checked or not - DONE
             - Increase overall font size? It's kinda small - settings menu maybe?
             - Implement a counter for the number of items in a group, and display it in the group's name
             - Bundle groups into days, and add the ability to switch between days
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView fab_addGroup_cardText, fab_addItem_cardText;
     private Animation fab_open, fab_close;
     private String userData;
+    private int longClickedGroupPosition, longClickedItemPosition;
     ExpandableListView expandableListView;
     LinkedHashMap<String, GroupInfo> listItem;
     ArrayList<GroupInfo> listGroup;
@@ -69,6 +71,16 @@ public class MainActivity extends AppCompatActivity {
         listItem = new LinkedHashMap<>();
         ca = new CoolAdapter(this, listGroup);
         expandableListView.setAdapter(ca);
+        expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                longClickedGroupPosition = ExpandableListView.getPackedPositionGroup(id);
+                longClickedItemPosition = ExpandableListView.getPackedPositionChild(id);
+                DeleteItemDialogFragment didf = new DeleteItemDialogFragment();
+                didf.show(getSupportFragmentManager(), "delete_item");
+                return true;
+            }
+        });
         userData = getResources().getString(R.string.user_data_filename);
 
         load();
@@ -231,6 +243,12 @@ public class MainActivity extends AppCompatActivity {
     private void launchAddGroupActivity() {
         Intent intent = new Intent(this, AddGroupActivity.class);
         startActivityForResult(intent, TEXT_REQUEST_GROUP);
+    }
+
+    public void deleteItemFromList() {
+        Toast.makeText(getApplicationContext(), "Item deleted", Toast.LENGTH_SHORT).show();
+        listGroup.get(longClickedGroupPosition).getList().remove(longClickedItemPosition);
+        ca.notifyDataSetChanged();
     }
 
     // Adds a new group to the end of the ExpandableListView

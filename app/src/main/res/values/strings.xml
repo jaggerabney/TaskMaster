@@ -12,6 +12,7 @@
     <string name="delete_data_message">Delete all data?</string>
     <string name="delete_data_yes">Yes</string>
     <string name="delete_data_no">No</string>
+    <string name="delete_item_message">Delete item?</string>
 
     <string-array name="group1">
         <item>item1</item>
