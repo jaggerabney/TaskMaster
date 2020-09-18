@@ -14,6 +14,10 @@
     <string name="delete_data_no">No</string>
     <string name="delete_item_message">Delete item?</string>
     <string name="settings_toolbar_title">Settings</string>
+    <string name="info_item_delete">Item deleted</string>
+    <string name="error_file_delete">File couldn\'t be deleted!</string>
+    <string name="error_load">Couldn\'t load!</string>
+    <string name="error_save">Couldn\'t save!</string>
 
     <string-array name="group1">
         <item>item1</item>

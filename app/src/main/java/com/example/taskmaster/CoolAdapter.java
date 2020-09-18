@@ -63,6 +63,7 @@ public class CoolAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isLastChild, View view, ViewGroup parent) {
         GroupInfo group = (GroupInfo) getGroup(groupPosition);
+        group.updateItemsRemaining();
 
         if (view == null) {
             LayoutInflater lf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -71,6 +72,7 @@ public class CoolAdapter extends BaseExpandableListAdapter {
 
         TextView name = view.findViewById(R.id.listTitle);
         name.setText(group.getName());
+        name.append(" (" + group.getItemsRemaining() + " items)");
         return view;
     }
 
@@ -97,10 +99,12 @@ public class CoolAdapter extends BaseExpandableListAdapter {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 item.setChecked(isChecked);
-                if (isChecked)
+                if (isChecked) {
                     name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                else
+                } else {
                     name.setPaintFlags(name.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+                notifyDataSetChanged();
                 ma.save();
             }
         });

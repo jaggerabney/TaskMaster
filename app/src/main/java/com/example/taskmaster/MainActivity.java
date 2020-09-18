@@ -34,7 +34,6 @@ import java.util.LinkedHashMap;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
             - Increase overall font size? It's kinda small - settings menu maybe?
-            - Implement a counter for the number of items in a group, and display it in the group's name
             - Bundle groups into days, and add the ability to switch between days
             - Also implement a counter for the total number of items to do in a day
             - Ability to switch between days via the calendar menu icon? Will require multiple files; that's okay
@@ -166,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             addItem(new ItemInfo(item, false), groupInfo);
-            ca.notifyDataSetChanged();
         } else if (requestCode == TEXT_REQUEST_GROUP && resultCode == RESULT_OK) {
             String group = data.getStringExtra(AddGroupActivity.EXTRA_GROUP);
             for (GroupInfo gi : listGroup) {
@@ -176,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             addGroup(new GroupInfo(group));
-            ca.notifyDataSetChanged();
         } else Toast.makeText(this, R.string.error_warning, Toast.LENGTH_LONG).show();
         save();
     }
@@ -199,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             }
             oos.close();
         } catch (Exception e) {
-            Toast.makeText(this, "Couldn't save!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.error_save, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -219,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             }
             ois.close();
         } catch (Exception e) {
-            Toast.makeText(this, "Couldn't load!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.error_load, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -228,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
         if (file.delete()) {
             file.createNewFile();
         } else {
-            Toast.makeText(this, "File couldn't be deleted!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_file_delete, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -244,8 +241,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void deleteItemFromList() {
-        Toast.makeText(getApplicationContext(), "Item deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.info_item_delete, Toast.LENGTH_SHORT).show();
         listGroup.get(longClickedGroupPosition).getList().remove(longClickedItemPosition);
+        listGroup.get(longClickedGroupPosition).updateItemsRemaining();
         save();
         ca.notifyDataSetChanged();
     }
