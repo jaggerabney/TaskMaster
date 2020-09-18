@@ -75,10 +75,6 @@ public class AddItemActivity extends AppCompatActivity implements AdapterView.On
         finish();
     }
 
-    public void deleteItem(View view) {
-
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
 

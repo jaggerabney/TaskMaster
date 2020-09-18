@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
-            - Upload v1.0 to github! You'll hate doing it, but your future self will thank you - DONE
-            - Add an option to remove items from groups, checked or not - DONE
             - Increase overall font size? It's kinda small - settings menu maybe?
             - Implement a counter for the number of items in a group, and display it in the group's name
             - Bundle groups into days, and add the ability to switch between days
@@ -248,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
     public void deleteItemFromList() {
         Toast.makeText(getApplicationContext(), "Item deleted", Toast.LENGTH_SHORT).show();
         listGroup.get(longClickedGroupPosition).getList().remove(longClickedItemPosition);
+        save();
         ca.notifyDataSetChanged();
     }
 
@@ -275,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_delete_data:
                 DialogFragment df = new DeleteDataDialogFragment();
