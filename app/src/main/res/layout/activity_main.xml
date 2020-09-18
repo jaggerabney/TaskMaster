@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="TaskMaster 1.0"
+        app:titleTextColor="#FFFFFF"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_addGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/fab_addItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_white"
+        tools:ignore="VectorDrawableCompat" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fab_addGroup_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:cardBackgroundColor="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_addGroup"
+        app:layout_constraintEnd_toStartOf="@+id/fab_addGroup"
+        app:layout_constraintTop_toTopOf="@+id/fab_addGroup">
+
+        <TextView
+            android:id="@+id/fab_addGroup_card_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Add group"
+            android:textColor="@color/white"
+            android:visibility="invisible" />
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_addItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="8dp"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorAccent"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_white"
+        tools:ignore="VectorDrawableCompat" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fab_addItem_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:cardBackgroundColor="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_addItem"
+        app:layout_constraintEnd_toStartOf="@+id/fab_addItem"
+        app:layout_constraintTop_toTopOf="@+id/fab_addItem">
+
+        <TextView
+            android:id="@+id/fab_addItem_card_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Add item"
+            android:textColor="@color/white"
+            android:visibility="invisible" />
+    </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/colorPrimary"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_add_white"
+            tools:ignore="VectorDrawableCompat" />
+
+    <ExpandableListView
+        android:id="@+id/expandableListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="0.5dp"
+        android:indicatorRight="?android:expandableListPreferredItemIndicatorRight"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.0" >
+
+    </ExpandableListView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

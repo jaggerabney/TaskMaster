@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">TaskMaster</string>
+    <string name="group1">Group1</string>
+    <string name="group2">Group2</string>
+    <string name="group3">Group3</string>
+    <string name="group4">Group4</string>
+    <string name="group5">Group5</string>
+    <string name="addgroup_toolbartitle">Add new group...</string>
+    <string name="additem_toolbartitle">Add new item...</string>
+    <string name="error_warning">Something went wrong!</string>
+    <string name="user_data_filename">data.txt</string>
+    <string name="delete_data_message">Delete all data?</string>
+    <string name="delete_data_yes">Yes</string>
+    <string name="delete_data_no">No</string>
+
+    <string-array name="group1">
+        <item>item1</item>
+    </string-array>
+
+    <string-array name="group2">
+        <item>item1</item>
+        <item>item2</item>
+    </string-array>
+
+    <string-array name="group3">
+        <item>item1</item>
+        <item>item2</item>
+        <item>item3</item>
+    </string-array>
+
+    <string-array name="group4">
+        <item>item1</item>
+        <item>item2</item>
+        <item>item3</item>
+        <item>item4</item>
+    </string-array>
+
+    <string-array name="group5">
+        <item>item1</item>
+        <item>item2</item>
+        <item>item3</item>
+        <item>item4</item>
+        <item>item5</item>
+    </string-array>
+
+    <string-array name="categories_array">
+        <item>Group</item>
+        <item>Item</item>
+    </string-array>
+</resources>
