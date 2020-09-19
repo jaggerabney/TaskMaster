@@ -19,6 +19,8 @@
     <string name="error_load">Couldn\'t load!</string>
     <string name="error_save">Couldn\'t save!</string>
     <string name="sharedprefs_fontsize_key">FONT_SIZE</string>
+    <string name="info_group_delete">Group deleted</string>
+    <string name="delete_elem_message">Delete element?</string>
 
     <string-array name="group1">
         <item>item1</item>
