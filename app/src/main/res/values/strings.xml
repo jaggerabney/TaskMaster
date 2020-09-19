@@ -18,6 +18,7 @@
     <string name="error_file_delete">File couldn\'t be deleted!</string>
     <string name="error_load">Couldn\'t load!</string>
     <string name="error_save">Couldn\'t save!</string>
+    <string name="sharedprefs_fontsize_key">FONT_SIZE</string>
 
     <string-array name="group1">
         <item>item1</item>

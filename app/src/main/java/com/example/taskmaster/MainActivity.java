@@ -2,8 +2,10 @@ package com.example.taskmaster;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +36,7 @@ import java.util.LinkedHashMap;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
             - Increase overall font size? It's kinda small - settings menu maybe?
+            - Add the ability to delete groups! Doing so currently crashes the app lmao
             - Bundle groups into days, and add the ability to switch between days
             - Also implement a counter for the total number of items to do in a day
             - Ability to switch between days via the calendar menu icon? Will require multiple files; that's okay
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHOICES = "com.example.android.taskmaster.extra.CHOICES";
     public static final int TEXT_REQUEST_ITEM = 1;
     public static final int TEXT_REQUEST_GROUP = 2;
+    public static final FontSize FONT_SIZE_DEFAULT = FontSize.MEDIUM;
 
     private FloatingActionButton fab_addGroup, fab_addItem;
     private CardView fab_addGroup_card, fab_addItem_card;
@@ -50,10 +54,14 @@ public class MainActivity extends AppCompatActivity {
     private Animation fab_open, fab_close;
     private String userData;
     private int longClickedGroupPosition, longClickedItemPosition;
+
     ExpandableListView expandableListView;
     LinkedHashMap<String, GroupInfo> listItem;
     ArrayList<GroupInfo> listGroup;
     CoolAdapter ca;
+    FontSize fontSize;
+    SharedPreferences sharedPrefs;
+    SharedPreferences.Editor editor;
 
     boolean fabIsOpen = false;
 
@@ -79,9 +87,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         userData = getResources().getString(R.string.user_data_filename);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        editor = sharedPrefs.edit();
 
         load();
         initFab();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String fontSizeAsString = sharedPrefs.getString(getString(R.string.sharedprefs_fontsize_key), MainActivity.FONT_SIZE_DEFAULT.name());
+        FontSize fontSize = FontSize.valueOf(fontSizeAsString);
+        setFontSize(fontSize);
+        fab_addGroup_cardText.setTextSize(fontSize.getCardSizeInSp());
+        fab_addItem_cardText.setTextSize(fontSize.getCardSizeInSp());
+        ca.notifyDataSetChanged();
     }
 
     private void initToolbar() {
@@ -307,6 +328,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setListGroup(ArrayList<GroupInfo> listGroup) {
         this.listGroup = listGroup;
+    }
+
+    public void setFontSize(FontSize fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public FontSize getFontSize() {
+        return fontSize;
     }
 }
 

@@ -29,6 +29,7 @@ public class MainAdapter extends BaseExpandableListAdapter {
     HashMap<Integer, boolean[]> checkedStates;
     GroupViewHolder groupViewHolder;
     ItemViewHolder itemViewHolder;
+    FontSize fontSize;
 
     public MainAdapter(Context context, List<String> listGroup, HashMap<String, List<String>> listItem) {
         this.context = context;

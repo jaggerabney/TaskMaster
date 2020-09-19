@@ -2,6 +2,7 @@ package com.example.taskmaster;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -73,6 +75,13 @@ public class CoolAdapter extends BaseExpandableListAdapter {
         TextView name = view.findViewById(R.id.listTitle);
         name.setText(group.getName());
         name.append(" (" + group.getItemsRemaining() + " items)");
+
+        if (ma.getFontSize() != null) {
+            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, ma.getFontSize().getGroupSizeInSp());
+        } else {
+            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainActivity.FONT_SIZE_DEFAULT.getGroupSizeInSp());
+        }
+
         return view;
     }
 
@@ -94,6 +103,12 @@ public class CoolAdapter extends BaseExpandableListAdapter {
 
         // holy shit i can't believe i got this to work first try
         name.setPaintFlags(item.isChecked() ? name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : name.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+
+        if (ma.getFontSize() != null) {
+            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, ma.getFontSize().getItemSizeInSp());
+        } else {
+            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainActivity.FONT_SIZE_DEFAULT.getItemSizeInSp());
+        }
 
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

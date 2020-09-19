@@ -32,7 +32,7 @@ public class DeleteDataDialogFragment extends DialogFragment {
                 .setNegativeButton(R.string.delete_data_no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        // do nothing
                     }
                 });
         return builder.create();
