@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
-            - Add the ability to delete groups! Doing so currently crashes the app lmao
             - Bundle groups into days, and add the ability to switch between days
             - Also implement a counter for the total number of items to do in a day
             - Ability to switch between days via the calendar menu icon? Will require multiple files; that's okay
@@ -78,11 +77,7 @@ public class MainActivity extends AppCompatActivity {
         expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                longClickedElementType = ExpandableListView.getPackedPositionType(id);
-                longClickedGroupPosition = ExpandableListView.getPackedPositionGroup(id);
-                longClickedItemPosition = ExpandableListView.getPackedPositionChild(id);
-                DeleteItemDialogFragment didf = new DeleteItemDialogFragment();
-                didf.show(getSupportFragmentManager(), "delete_item");
+                // do nothing (for now)
                 return true;
             }
         });
@@ -261,10 +256,10 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, TEXT_REQUEST_GROUP);
     }
 
-    public void deleteItemFromList() {
+    public void deleteItemFromList(int groupPosition, int childPosition) {
         Toast.makeText(this, R.string.info_item_delete, Toast.LENGTH_SHORT).show();
-        listGroup.get(longClickedGroupPosition).getList().remove(longClickedItemPosition);
-        listGroup.get(longClickedGroupPosition).updateItemsRemaining();
+        listGroup.get(groupPosition).getList().remove(childPosition);
+        listGroup.get(groupPosition).updateItemsRemaining();
         save();
         ca.notifyDataSetChanged();
     }

@@ -40,19 +40,20 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void initSpinner() {
         final Spinner spinner = findViewById(R.id.settings_fontsize_spinner);
+        final String key = getString(R.string.sharedprefs_fontsize_key);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, FontSize.names());
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
-        spinner.setSelection(spinnerAdapter.getPosition(sharedPrefs.getString(getString(R.string.sharedprefs_fontsize_key),
+        spinner.setSelection(spinnerAdapter.getPosition(sharedPrefs.getString(key,
                 MainActivity.FONT_SIZE_DEFAULT.name())));
         // death
-        fontSize_textView.setTextSize(FontSize.valueOf(sharedPrefs.getString(getString(R.string.sharedprefs_fontsize_key),
+        fontSize_textView.setTextSize(FontSize.valueOf(sharedPrefs.getString(key,
                 MainActivity.FONT_SIZE_DEFAULT.name())).getItemSizeInSp());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                editor.putString(getString(R.string.sharedprefs_fontsize_key), spinner.getSelectedItem().toString());
+                editor.putString(key, spinner.getSelectedItem().toString());
                 editor.commit();
                 fontSize_textView.setTextSize(FontSize.valueOf(spinner.getSelectedItem().toString()).getItemSizeInSp());
             }

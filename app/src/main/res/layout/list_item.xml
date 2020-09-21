@@ -5,19 +5,33 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <TextView
         android:id="@+id/expandedlistitem_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="16"
+        android:background="@color/background"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingTop="10dp"
         android:paddingBottom="10dp" />
+
+    <ImageButton
+        android:id="@+id/expandedlistitem_deletebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="@color/background"
+        android:onClick="deleteItem"
+        android:tint="@color/gray"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
     <CheckBox
         android:id="@+id/expandedlistitem_checkbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:focusable="false"/>
+        android:background="@color/background"
+        android:focusable="false" />
+
 </LinearLayout>
