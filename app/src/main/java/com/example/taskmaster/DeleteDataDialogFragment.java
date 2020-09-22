@@ -21,7 +21,7 @@ public class DeleteDataDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             MainActivity ma = (MainActivity) getActivity();
-                            ma.delete();
+                            ma.delete(ma.getUserData());
                             ma.recreate();
                             dismiss();
                         } catch (IOException e) {

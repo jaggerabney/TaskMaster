@@ -178,7 +178,7 @@ public class CoolAdapter extends BaseExpandableListAdapter {
                 // is strike-thru'd in real time
                 notifyDataSetChanged();
                 // Finally, the state of the newly-checked (or unchecked) checkbox is saved using the MainActivity's save() method
-                ma.save();
+                ma.save(ma.getUserData());
             }
         });
 

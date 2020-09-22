@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,9 +36,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
             - Bundle groups into days, and add the ability to switch between days
@@ -47,6 +52,8 @@ import java.util.LinkedHashMap;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHOICES = "com.example.android.taskmaster.extra.CHOICES";
+    public static final String DATE_FORMAT = "MM/dd/yy";
+    public static final String USERDATA_FILE_EXTENSION = ".txt";
     public static final int TEXT_REQUEST_ITEM = 1;
     public static final int TEXT_REQUEST_GROUP = 2;
     public static final FontSize FONT_SIZE_DEFAULT = FontSize.MEDIUM;
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     FontSize fontSize;
     SharedPreferences sharedPrefs;
     SharedPreferences.Editor editor;
+    Calendar calendar;
 
     boolean fabIsOpen = false;
 
@@ -77,14 +85,17 @@ public class MainActivity extends AppCompatActivity {
         expandableListView = findViewById(R.id.expandableListView);
         listGroup = new ArrayList<>();
         listItem = new LinkedHashMap<>();
+        calendar = Calendar.getInstance();
         ca = new CoolAdapter(this, listGroup);
         expandableListView.setAdapter(ca);
         registerForContextMenu(expandableListView);
-        userData = getResources().getString(R.string.user_data_filename);
+        userData = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
+                .format(calendar.getTime()).replace('/', '-').concat(USERDATA_FILE_EXTENSION);
+        Toast.makeText(this, userData, Toast.LENGTH_SHORT).show();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = sharedPrefs.edit();
 
-        load();
+        load(userData);
         initFab();
     }
 
@@ -218,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
             }
             addGroup(new GroupInfo(group));
         } else Toast.makeText(this, R.string.error_warning, Toast.LENGTH_LONG).show();
-        save();
+        save(userData);
     }
 
     private GroupInfo findObjectWithNameIn(String name, ArrayList<GroupInfo> list) {
@@ -230,25 +241,38 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    public void save() {
+    public void save(String filename) {
         try {
-            FileOutputStream fos = this.openFileOutput(userData, Context.MODE_PRIVATE);
+            File file = new File(getFilesDir(), filename);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             for (GroupInfo gi : listGroup) {
                 oos.writeObject(gi);
             }
             oos.close();
         } catch (Exception e) {
-            Toast.makeText(this, R.string.error_save, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, userData, Toast.LENGTH_LONG).show();
         }
     }
 
-    public void load() {
+    public void load(String filename) {
+        listGroup.clear();
+        File file = new File(getFilesDir(), filename);
+
+        if (file.length() == 0) {
+            ca.notifyDataSetChanged();
+            return;
+        }
+
         try {
-            FileInputStream fis = this.openFileInput(userData);
+            FileInputStream fis = this.openFileInput(filename);
             ObjectInputStream ois = new ObjectInputStream(fis);
             boolean keepReading = true;
             GroupInfo gi;
+
             try {
                 while (keepReading) {
                     gi = (GroupInfo) ois.readObject();
@@ -259,12 +283,18 @@ public class MainActivity extends AppCompatActivity {
             }
             ois.close();
         } catch (Exception e) {
-            Toast.makeText(this, R.string.error_load, Toast.LENGTH_LONG).show();
+            try {
+                file.createNewFile();
+                load(filename);
+            } catch (IOException ioe) {
+                Toast.makeText(this, R.string.error_load, Toast.LENGTH_LONG).show();
+            }
         }
+        ca.notifyDataSetChanged();
     }
 
-    public void delete() throws IOException {
-        File file = new File(getApplicationContext().getFilesDir() + File.separator + userData);
+    public void delete(String filename) throws IOException {
+        File file = new File(getApplicationContext().getFilesDir() + File.separator + userData + ".txt");
         if (file.delete()) {
             file.createNewFile();
         } else {
@@ -310,14 +340,14 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.info_item_delete, Toast.LENGTH_SHORT).show();
         listGroup.get(groupPosition).getList().remove(childPosition);
         listGroup.get(groupPosition).updateItemsRemaining();
-        save();
+        save(userData);
         ca.notifyDataSetChanged();
     }
 
     public void deleteGroupFromList(int groupPosition) {
         Toast.makeText(this, R.string.info_group_delete, Toast.LENGTH_SHORT).show();
         listGroup.remove(groupPosition);
-        save();
+        save(userData);
         ca.notifyDataSetChanged();
     }
 
@@ -397,6 +427,14 @@ public class MainActivity extends AppCompatActivity {
 
     public int getLongClickedElementType() {
         return longClickedElementType;
+    }
+
+    public String getUserData() {
+        return userData;
+    }
+
+    public void setUserData(String simplifiedDate) {
+        userData = simplifiedDate + USERDATA_FILE_EXTENSION;
     }
 }
 

@@ -14,16 +14,17 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class DatePickerFragment extends AppCompatDialogFragment implements DatePickerDialog.OnDateSetListener {
-    private static final String TAG = "DatePickerFragment";
     final Calendar calendar = Calendar.getInstance();
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        MainActivity ma = (MainActivity) getActivity();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        String selectedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(calendar.getTime());
-        Toast.makeText(getActivity(), selectedDate, Toast.LENGTH_SHORT).show();
+        String selectedDate = new SimpleDateFormat(MainActivity.DATE_FORMAT, Locale.ENGLISH).format(calendar.getTime()).replace('/', '-');
+        ma.setUserData(selectedDate);
+        ma.load(selectedDate + ".txt");
     }
 
     @Override
