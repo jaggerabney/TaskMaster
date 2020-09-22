@@ -1,13 +1,17 @@
 package com.example.taskmaster;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -66,22 +70,40 @@ public class CoolAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    @SuppressLint("NewApi")
     @Override
-    public View getGroupView(int groupPosition, boolean isLastChild, View view, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isLastChild, View view, ViewGroup parent) {
+        // Gets a reference to the GroupInfo associated with this view, as it's used/updated a lot
         GroupInfo group = (GroupInfo) getGroup(groupPosition);
+        // Updates the items remaining using the associated GroupInfo's updateItemsRemaining() method
+        // itemsRemaining is an integer that keeps track of how many items in a given group still need to be completed
+        // Items count toward the total if they: a) exist, and b) are not checked (i.e. not completed)
         group.updateItemsRemaining();
 
+        // Creates the view if it hasn't been already
         if (view == null) {
             LayoutInflater lf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = lf.inflate(R.layout.list_group, null);
         }
 
+        // Gets a reference to the TextView associated with this view, and sets its text according to the
+        // GroupInfo's name field
         TextView name = view.findViewById(R.id.listTitle);
         name.setText(group.getName());
+        // The "(x items)" string is appended to the TextView rather than the GroupInfo's string so as to
+        // not affect any methods that may look to the GroupInfo's string for information
+        // As of writing this, none exist yet, but they might in the future
         name.append(" (" + group.getItemsRemaining() + " items)");
 
-        if (ma.getFontSize() != null) {
-            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, ma.getFontSize().getGroupSizeInSp());
+        // Sets the size of the text in this element's TextView according to the fontSize specified in SharedPrefs
+        // By default - if there is no SharedPrefs - this is the Medium option, which (as of writing this) is 16sp
+        // Whenever this value is changed in the Settings activity - specifically when the MainActivity resumes via the
+        // onResume method - the MainActivity's CoolAdapter.notifyDataSetChanged() is called, which in turn
+        // changed the size of all group elements' texts in the ExpandableListView
+        // Look to getItemView for the code that changes item text size (spoiler: it's literally the same)
+        FontSize preferredFontSize = ma.getFontSize();
+        if (preferredFontSize != null) {
+            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferredFontSize.getGroupSizeInSp());
         } else {
             name.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainActivity.FONT_SIZE_DEFAULT.getGroupSizeInSp());
         }
@@ -89,6 +111,7 @@ public class CoolAdapter extends BaseExpandableListAdapter {
         return view;
     }
 
+    @SuppressLint("NewApi")
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View view, ViewGroup parent) {
         // Gets a reference to the ItemInfo for the item in the group at index groupPosition with index
@@ -100,6 +123,9 @@ public class CoolAdapter extends BaseExpandableListAdapter {
             LayoutInflater lf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = lf.inflate(R.layout.list_item, null);
         }
+
+        // TODO: make item views respond visually to clicks!
+        view.setLongClickable(true);
 
         // Gets a reference to the TextView element within this item, for cleanliness
         // Reference is final because it is used in the OnCheckedChangeListener of the view's checkbox
@@ -124,8 +150,9 @@ public class CoolAdapter extends BaseExpandableListAdapter {
         // onResume method - the MainActivity's CoolAdapter.notifyDataSetChanged() is called, which in turn
         // changed the size of all items (child elements, NOT group elements) in the ExpandableListView
         // Look to getGroupView for the code that changes group text size (spoiler: it's literally the same)
-        if (ma.getFontSize() != null) {
-            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, ma.getFontSize().getItemSizeInSp());
+        FontSize preferredFontSize = ma.getFontSize();
+        if (preferredFontSize != null) {
+            name.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferredFontSize.getItemSizeInSp());
         } else {
             name.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainActivity.FONT_SIZE_DEFAULT.getItemSizeInSp());
         }
@@ -152,21 +179,6 @@ public class CoolAdapter extends BaseExpandableListAdapter {
                 notifyDataSetChanged();
                 // Finally, the state of the newly-checked (or unchecked) checkbox is saved using the MainActivity's save() method
                 ma.save();
-            }
-        });
-
-        // Gets a reference to the delete button within this view, and defines its onClick method
-        // It's important to note that, since there is no guarantee as to how many or few elements will be in an
-        // ExpandableListView, all of its views (groups and items) are generated programmatically
-        // This is why an OnClickListener needs to be used, as opposed to an onClick field in the view's .xml file
-        // The only reference you'll get to the image button will be upon its creation/mutation
-        ImageButton deleteButton = view.findViewById(R.id.expandedlistitem_deletebutton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int elementType = ExpandableListView.getPackedPositionType(ExpandableListView.getPackedPositionForChild(groupPosition, childPosition));
-                DeleteItemDialogFragment didf = new DeleteItemDialogFragment(groupPosition, childPosition, elementType);
-                didf.show(((MainActivity)view.getContext()).getSupportFragmentManager(), "delete_item");
             }
         });
 

@@ -12,9 +12,16 @@ import androidx.fragment.app.DialogFragment;
 public class DeleteItemDialogFragment extends DialogFragment {
     private int groupPosition, childPosition, elementType;
 
+    // Used for deleting items
     public DeleteItemDialogFragment(int groupPosition, int childPosition, int elementType) {
         this.groupPosition = groupPosition;
         this.childPosition = childPosition;
+        this.elementType = elementType;
+    }
+
+    // Used for deleting groups
+    public DeleteItemDialogFragment(int groupPosition, int elementType) {
+        this.groupPosition = groupPosition;
         this.elementType = elementType;
     }
 
@@ -31,7 +38,7 @@ public class DeleteItemDialogFragment extends DialogFragment {
                                 ma.deleteItemFromList(groupPosition, childPosition);
                                 break;
                             case (ExpandableListView.PACKED_POSITION_TYPE_GROUP):
-                                ma.deleteGroupFromList();
+                                ma.deleteGroupFromList(groupPosition);
                                 break;
                             default:
                                 Toast.makeText(ma, getString(R.string.error_warning), Toast.LENGTH_SHORT).show();
