@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(expandableListView);
         userData = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
                 .format(calendar.getTime()).replace('/', '-').concat(USERDATA_FILE_EXTENSION);
-        Toast.makeText(this, userData, Toast.LENGTH_SHORT).show();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = sharedPrefs.edit();
 
@@ -294,12 +293,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void delete(String filename) throws IOException {
-        File file = new File(getApplicationContext().getFilesDir() + File.separator + userData + ".txt");
+        File file = new File(getApplicationContext().getFilesDir() + File.separator + userData);
         if (file.delete()) {
             file.createNewFile();
-        } else {
-            Toast.makeText(this, R.string.error_file_delete, Toast.LENGTH_SHORT).show();
         }
+        // recreate() is called after this, so there's no point in including a toast
     }
 
     public void rename(int groupPosition, int childPosition, int elementType, String name) {
