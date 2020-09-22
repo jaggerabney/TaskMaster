@@ -1,6 +1,7 @@
 package com.example.taskmaster;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GroupInfo implements Serializable {
@@ -25,6 +26,14 @@ public class GroupInfo implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public ArrayList<String> getNames() {
+        ArrayList<String> names = new ArrayList<>();
+        for (ItemInfo ii : list) {
+            names.add(ii.getName());
+        }
+        return names;
     }
 
     public void setName(String name) {

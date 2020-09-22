@@ -6,13 +6,17 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +36,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 /* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
@@ -74,13 +79,7 @@ public class MainActivity extends AppCompatActivity {
         listItem = new LinkedHashMap<>();
         ca = new CoolAdapter(this, listGroup);
         expandableListView.setAdapter(ca);
-        expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // do nothing (for now)
-                return true;
-            }
-        });
+        registerForContextMenu(expandableListView);
         userData = getResources().getString(R.string.user_data_filename);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = sharedPrefs.edit();
@@ -98,6 +97,34 @@ public class MainActivity extends AppCompatActivity {
         fab_addGroup_cardText.setTextSize(fontSize.getCardSizeInSp());
         fab_addItem_cardText.setTextSize(fontSize.getCardSizeInSp());
         ca.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+        MenuInflater mi = getMenuInflater();
+        mi.inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
+        int elementType = ExpandableListView.getPackedPositionType(info.packedPosition);
+        int groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+        int childPosition = ExpandableListView.getPackedPositionChild(info.packedPosition);
+
+        switch (item.getTitle().toString()) {
+            case "Rename":
+                RenameItemDialogFragment ridf = new RenameItemDialogFragment(groupPosition, childPosition, elementType);
+                ridf.show(getSupportFragmentManager(), "rename_item");
+                return true;
+            case "Delete":
+                DeleteItemDialogFragment didf = new DeleteItemDialogFragment(groupPosition, childPosition, elementType);
+                didf.show(getSupportFragmentManager(), "delete_item");
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void initToolbar() {
@@ -245,6 +272,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void rename(int groupPosition, int childPosition, int elementType, String name) {
+        switch (elementType) {
+            case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
+                if (!Arrays.asList(getAllNamesInGroupInfo()).contains(name)) {
+                    listGroup.get(groupPosition).setName(name);
+                    ca.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(this, R.string.error_warning, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
+                if (!listGroup.get(groupPosition).getNames().contains(name)) {
+                    listGroup.get(groupPosition).getList().get(childPosition).setName(name);
+                    ca.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(this, R.string.error_warning, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                Toast.makeText(this, R.string.error_warning, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void launchAddItemActivity() {
         Intent intent = new Intent(this, AddItemActivity.class);
         intent.putExtra(EXTRA_CHOICES, getAllNamesInGroupInfo());
@@ -264,9 +314,9 @@ public class MainActivity extends AppCompatActivity {
         ca.notifyDataSetChanged();
     }
 
-    public void deleteGroupFromList() {
+    public void deleteGroupFromList(int groupPosition) {
         Toast.makeText(this, R.string.info_group_delete, Toast.LENGTH_SHORT).show();
-        listGroup.remove(longClickedGroupPosition);
+        listGroup.remove(groupPosition);
         save();
         ca.notifyDataSetChanged();
     }
