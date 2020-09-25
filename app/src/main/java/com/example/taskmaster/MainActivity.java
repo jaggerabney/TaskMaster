@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.EOFException;
 import java.io.File;
@@ -44,7 +45,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
-/*  TODO: fix bug where days are not kept track of between activities
+/*  TODO: fix bug where days are not kept track of between activities - DONE
           add snackbars to indicate that days are loaded (makes it more obvious when they're empty)
           import uncompleted activities to subsequent days (upon creation? addition of item?)
           add an 'add items...' activity once the above are completed
@@ -54,12 +55,12 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHOICES = "com.example.android.taskmaster.extra.CHOICES";
     public static final String DATE_FORMAT = "MM/dd/yy";
-    public static final String USERDATA_FILE_EXTENSION = ".txt";
+    public static final String USERDATA_FILE_EXTENSION = ".ser";
     public static final int TEXT_REQUEST_ITEM = 1;
     public static final int TEXT_REQUEST_GROUP = 2;
     public static final FontSize FONT_SIZE_DEFAULT = FontSize.MEDIUM;
 
-    private FloatingActionButton fab_addGroup, fab_addItem;
+    private FloatingActionButton fab, fab_addGroup, fab_addItem;
     private CardView fab_addGroup_card, fab_addItem_card;
     private TextView fab_addGroup_cardText, fab_addItem_cardText;
     private Animation fab_open, fab_close;
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFab() {
-        FloatingActionButton fab = findViewById(R.id.floatingActionButton);
+        fab = findViewById(R.id.floatingActionButton);
         fab_addGroup = findViewById(R.id.fab_addGroup);
         fab_addItem = findViewById(R.id.fab_addItem);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
@@ -292,6 +293,8 @@ public class MainActivity extends AppCompatActivity {
                 keepReading = false;
             }
 
+
+            Toast.makeText(this, "Loaded " + filename, Toast.LENGTH_SHORT).show();
             ois.close();
         } catch (Exception e) {
             try {
