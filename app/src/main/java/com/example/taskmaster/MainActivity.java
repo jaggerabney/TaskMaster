@@ -44,10 +44,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
-/* TODO: Version 1.0 is done! Good job. A few (of many) things for 1.1:
-            - Bundle groups into days, and add the ability to switch between days
-            - Also implement a counter for the total number of items to do in a day
-            - Ability to switch between days via the calendar menu icon? Will require multiple files; that's okay
+/*  TODO: fix bug where days are not kept track of between activities
+          add snackbars to indicate that days are loaded (makes it more obvious when they're empty)
+          import uncompleted activities to subsequent days (upon creation? addition of item?)
+          add an 'add items...' activity once the above are completed
+          refactor? lol
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView fab_addGroup_cardText, fab_addItem_cardText;
     private Animation fab_open, fab_close;
     private String userData;
-    private int longClickedGroupPosition, longClickedItemPosition, longClickedElementType;
 
     ExpandableListView expandableListView;
     LinkedHashMap<String, GroupInfo> listItem;
@@ -89,10 +89,15 @@ public class MainActivity extends AppCompatActivity {
         ca = new CoolAdapter(this, listGroup);
         expandableListView.setAdapter(ca);
         registerForContextMenu(expandableListView);
-        userData = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
-                .format(calendar.getTime()).replace('/', '-').concat(USERDATA_FILE_EXTENSION);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = sharedPrefs.edit();
+
+        if (sharedPrefs.getString("user_data", null) != null) {
+            userData = sharedPrefs.getString("user_data", null);
+        } else {
+            userData = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
+                    .format(calendar.getTime()).replace('/', '-').concat(USERDATA_FILE_EXTENSION);
+        }
 
         load(userData);
         initFab();
@@ -243,14 +248,18 @@ public class MainActivity extends AppCompatActivity {
     public void save(String filename) {
         try {
             File file = new File(getFilesDir(), filename);
+
             if (!file.exists()) {
                 file.createNewFile();
             }
+
             FileOutputStream fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
+
             for (GroupInfo gi : listGroup) {
                 oos.writeObject(gi);
             }
+
             oos.close();
         } catch (Exception e) {
             Toast.makeText(this, userData, Toast.LENGTH_LONG).show();
@@ -258,9 +267,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void load(String filename) {
+        // clears the listGroup so that when notifyDataSetChanged() is called, the screen clears
         listGroup.clear();
         File file = new File(getFilesDir(), filename);
 
+        // if the file's empty, notify the adapter and bail out of the function
         if (file.length() == 0) {
             ca.notifyDataSetChanged();
             return;
@@ -280,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (EOFException e) {
                 keepReading = false;
             }
+
             ois.close();
         } catch (Exception e) {
             try {
@@ -289,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.error_load, Toast.LENGTH_LONG).show();
             }
         }
+
         ca.notifyDataSetChanged();
     }
 
@@ -324,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchAddItemActivity() {
+
         Intent intent = new Intent(this, AddItemActivity.class);
         intent.putExtra(EXTRA_CHOICES, getAllNamesInGroupInfo());
         startActivityForResult(intent, TEXT_REQUEST_ITEM);
@@ -423,16 +437,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public int getLongClickedElementType() {
-        return longClickedElementType;
-    }
-
     public String getUserData() {
         return userData;
     }
 
     public void setUserData(String simplifiedDate) {
         userData = simplifiedDate + USERDATA_FILE_EXTENSION;
+        editor.putString("user_data", userData);
+        editor.commit();
+        load(userData);
     }
 }
 

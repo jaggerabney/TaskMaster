@@ -22,9 +22,10 @@ public class DatePickerFragment extends AppCompatDialogFragment implements DateP
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        String selectedDate = new SimpleDateFormat(MainActivity.DATE_FORMAT, Locale.ENGLISH).format(calendar.getTime()).replace('/', '-');
+        String selectedDate = new SimpleDateFormat(MainActivity.DATE_FORMAT, Locale.ENGLISH)
+                .format(calendar.getTime()).replace('/', '-');
         ma.setUserData(selectedDate);
-        ma.load(selectedDate + ".txt");
+        ma.load(selectedDate + MainActivity.USERDATA_FILE_EXTENSION);
     }
 
     @Override
